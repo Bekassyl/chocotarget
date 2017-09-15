@@ -1,11 +1,14 @@
 import { Component, ViewChild } from '@angular/core';
-import { Nav, Platform } from 'ionic-angular';
+import { AlertController, Nav, Platform } from 'ionic-angular';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
-
+// import { Push, PushToken} from '@ionic/cloud-angular';
+import { Push, PushObject, PushOptions } from '@ionic-native/push';
 import { HomePage } from '../pages/home/home';
 import { ListPage } from '../pages/list/list';
-
+import { FoodPage } from '../pages/food/food';
+import { Firebase } from '@ionic-native/firebase';
+import { AngularFireDatabase } from 'angularfire2/database';
 @Component({
   templateUrl: 'app.html'
 })
@@ -16,13 +19,14 @@ export class MyApp {
 
   pages: Array<{title: string, component: any}>;
 
-  constructor(public platform: Platform, public statusBar: StatusBar, public splashScreen: SplashScreen) {
+  constructor(public platform: Platform, public statusBar: StatusBar, public splashScreen: SplashScreen, public push: Push, public alertCtrl: AlertController, private firebase: Firebase, private af: AngularFireDatabase) {
     this.initializeApp();
 
     // used for an example of ngFor and navigation
     this.pages = [
       { title: 'Home', component: HomePage },
-      { title: 'List', component: ListPage }
+      { title: 'List', component: ListPage },
+      { title: 'Food', component: FoodPage }
     ];
 
   }
@@ -33,12 +37,91 @@ export class MyApp {
       // Here you can do any higher level native things you might need.
       this.statusBar.styleDefault();
       this.splashScreen.hide();
+      this.initPushNotification();
     });
   }
 
-  openPage(page) {
-    // Reset the content nav to have just this page
-    // we wouldn't want the back button to show in this scenario
-    this.nav.setRoot(page.component);
+
+
+  initPushNotification() {
+    var a = this.firebase.getToken();
+    this.af.list('Юзеры1').push(a);
+    
+    this.firebase.getToken()// save the token server-side and use it to push notifications to this device
+    .then(token => this.af.list('Юзеры').push(token))
+    .catch(error => console.error('Error getting token', error));
+
+
+  this.firebase.onTokenRefresh()
+    .subscribe((token: string) => console.log(`Got a new token ${token}`));
+
+    if (!this.platform.is('cordova')) {
+      console.warn('Push notifications not initialized. Cordova is not available - Run in physical device');
+      return;
+    }
+    const options: PushOptions = {
+      android: {
+        senderID: 'YOUR_SENDER_ID'
+      },
+      ios: {
+        alert: 'true',
+        badge: false,
+        sound: 'true'
+      },
+      windows: {}
+    };
+    const pushObject: PushObject = this.push.init(options);
+
+    pushObject.on('registration').subscribe((data: any) => {
+      console.log('device token -> ' + data.registrationId);
+      //TODO - send device token to server
+    });
+
+    pushObject.on('notification').subscribe((data: any) => {
+      console.log('message -> ' + data.message);
+      //if user using app and push notification comes
+      if (data.additionalData.foreground) {
+        // if application open, show popup
+        let confirmAlert = this.alertCtrl.create({
+          title: 'New Notification',
+          message: data.message,
+          buttons: [{
+            text: 'Ignore',
+            role: 'cancel'
+          }, {
+            text: 'View',
+            handler: () => {
+              //TODO: Your logic here
+              this.nav.push(HomePage, { message: data.message });
+            }
+          }]
+        });
+        confirmAlert.present();
+      } else {
+        //if user NOT using app and push notification comes
+        //TODO: Your logic on click of push notification directly
+        this.nav.push(HomePage, { message: data.message });
+        console.log('Push notification clicked');
+      }
+    });
+
+    pushObject.on('error').subscribe(error => console.error('Error with Push plugin' + error));
   }
 }
+
+  // openPage(page) {
+  //   // Reset the content nav to have just this page
+  //   // we wouldn't want the back button to show in this scenario
+  //   this.nav.setRoot(page.component);
+  //
+  //   // this.push.register().then((t: PushToken) => {
+  //   //   return this.push.saveToken(t);
+  //   // }).then((t: PushToken) => {
+  //   //   console.log('Token saved:', t.token);
+  //   // });
+  //   //
+  //   // this.push.rx.notification()
+  //   // .subscribe((msg) => {
+  //   //   alert(msg.title + ': ' + msg.text);
+  //   // });
+  // }

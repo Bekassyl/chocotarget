@@ -1,5 +1,8 @@
 {
   "name": "chocotarget",
-  "app_id": "",
-  "type": "ionic-angular"
+  "app_id": "e035d688",
+  "type": "ionic-angular",
+  "integrations": {
+    "cordova": {}
+  }
 }

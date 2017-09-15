@@ -1,18 +1,31 @@
 <ion-header>
-  <ion-navbar>
-    <button ion-button menuToggle>
-      <ion-icon name="menu"></ion-icon>
-    </button>
-    <ion-title>Home</ion-title>
+  <ion-navbar color="primary">
+    <ion-title>
+      Messages
+    </ion-title>
   </ion-navbar>
 </ion-header>
 
 <ion-content padding>
-  <h3>Ionic Menu Starter</h3>
+  <ion-item>
+    <ion-label floating>Title</ion-label>
+    <ion-input [(ngModel)]="title"></ion-input>
+  </ion-item>
 
-  <p>
-    If you get lost, the <a href="http://ionicframework.com/docs/v2">docs</a> will show you the way.
-  </p>
+  <ion-item>
+    <ion-label floating>Tag</ion-label>
+    <ion-input [(ngModel)]="tag"></ion-input>
+  </ion-item>
 
-  <button ion-button secondary menuToggle>Toggle Menu</button>
+  <ion-item>
+    <ion-label floating>Body</ion-label>
+    <ion-textarea rows="7" [(ngModel)]="body"></ion-textarea>
+  </ion-item>
+
+  <ion-item>
+    <ion-label floating>Geometka</ion-label>
+    <ion-input [(ngModel)]="geometka"></ion-input>
+  </ion-item>
+
+  <button block ion-button clear (click)="sendMessage(title, body, geometka, tag)">Send Message</button>
 </ion-content>

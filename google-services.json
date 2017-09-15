@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "83150533068",
+    "firebase_url": "https://choco1-a83f4.firebaseio.com",
+    "project_id": "choco1-a83f4",
+    "storage_bucket": "choco1-a83f4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:83150533068:android:3a99c1a7a1ad61db",
+        "android_client_info": {
+          "package_name": "io.ionic.starter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "83150533068-bfr29n2jjbeo0krlmcs0r7evgot351jt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyApuWOfjJRZMM2A2KgFMDVXcUvWveiWdOI"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
